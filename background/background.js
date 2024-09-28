@@ -1,0 +1,1 @@
+const newTabUrls=["chrome://newtab/","edge://newtab/"];chrome.action.onClicked.addListener((()=>{chrome.tabs.create({url:"index.html"})})),chrome.tabs.onCreated.addListener((function(e){chrome.storage.sync.get("openInNewTab",(n=>{n.openInNewTab&&newTabUrls.includes(e.pendingUrl)&&chrome.tabs.update(e.id,{url:"index.html"})}))}));
