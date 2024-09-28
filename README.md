@@ -1,5 +1,7 @@
 Forked from [pintree](https://github.com/Pintree-io/pintree), add a python script to generate a json file from a firefox bookmark html file.
 
+The official way to convert html can be found [here](https://pintree.io/json-converter.html)!
+
 ## Steps
 
 1. export html file from firefox
