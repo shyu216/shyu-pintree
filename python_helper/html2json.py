@@ -4,11 +4,14 @@ from bs4 import BeautifulSoup
 def html_to_json(html_content):
 
     # 不递归则标签处理很麻烦
-    keys = set
+    keys = set()
 
 
     def parse_element(element):
         if element.name == 'a':
+            if element.text in keys:
+                return None
+            keys.add(element.text)
             return {
                 'type': 'link',
                 'addDate': element.get('add_date'),
@@ -18,17 +21,23 @@ def html_to_json(html_content):
                 'icon': element.get('icon')
             }
         elif element.name == 'h3':
+            if element.text in keys:
+                return None
+            keys.add(element.text)
+            children = [parse_element(child) for child in element.find_next_sibling('dl').p.find_all(['a', 'h3'])]
+            children = [child for child in children if child is not None]
             return {
                 'type': 'folder',
                 'addDate': element.get('add_date'),
                 'lastModified': element.get('last_modified'),
                 'title': element.text,
-                'children': [parse_element(child) for child in element.find_next_sibling('dl').p.find_all(['a', 'h3'])]
+                'children': children
             }
         return None
 
     soup = BeautifulSoup(html_content, 'html.parser')
-    bookmarks = [parse_element(h3) for h3 in soup.dl.p.find_all('h3')]
+    bookmarks = [parse_element(h3) for h3 in soup.find_all('h3')]
+    bookmarks = [bookmark for bookmark in bookmarks if bookmark is not None]
 
     return json.dumps(bookmarks, ensure_ascii=False, indent=4)
 
